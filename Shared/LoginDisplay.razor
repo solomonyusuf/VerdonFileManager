@@ -1,0 +1,19 @@
+﻿
+<AuthorizeView>
+    <Authorized>
+        <div class="navbar-right">
+            <ul class="navbar-nav">
+                <li><a href="/settings" class="js-right-sidebar" title="Setting"><i class="zmdi zmdi-settings zmdi-hc-spin"></i></a></li>
+                <li>
+                    <form method="post" action="logout">
+                    <a href="sign-in.html" type="submit" class="mega-menu" title="Sign Out"><i class="zmdi zmdi-power"></i></a>
+                    </form>
+                </li>
+            </ul>
+        </div>
+    </Authorized>
+    @*<NotAuthorized>
+        <a href="Identity/Account/Register">Register</a>
+        <a href="Identity/Account/Login">Log in</a>
+    </NotAuthorized>*@
+</AuthorizeView>
