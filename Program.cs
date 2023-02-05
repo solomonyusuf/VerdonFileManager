@@ -12,13 +12,14 @@ using VerdonFileManager.Data;
 using System.Security.Permissions;
 using Microsoft.AspNetCore.Http.Features;
 using VerdonFileManager.Models;
+using BlazorBootstrap;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlite(connectionString));
+    options.UseSqlServer (connectionString));
 
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 builder.Services.AddIdentity<AppUser, IdentityRole>(options => options.SignIn.RequireConfirmedAccount = true)
@@ -31,8 +32,9 @@ builder.Services.AddServerSideBlazor();
 builder.Services.AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<AppUser>>();
 builder.Services.AddSingleton<MailSettings>();
 builder.Services.AddSingleton<MailService>();
-builder.Services.AddTransient<UserService>();
 builder.Services.AddTransient<UploadService>();
+builder.Services.AddSession();
+builder.Services.AddHttpContextAccessor();
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("CorsPolicy",
@@ -47,7 +49,7 @@ builder.Services.Configure<FormOptions>(o =>
     o.MultipartBodyLengthLimit = 209715200;
     o.MemoryBufferThreshold = 209715200;
 });
-
+builder.Services.AddBlazorBootstrap();
 // configure static file permission
 FileIOPermission permission = new FileIOPermission(FileIOPermissionAccess.AllAccess, Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot", "StaticFiles"));
 permission.AddPathList(FileIOPermissionAccess.AllAccess, Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot", "UserImages"));
@@ -81,7 +83,7 @@ app.UseStaticFiles(new StaticFileOptions()
     RequestPath = new PathString("/wwwroot/UserImages")
 });
 app.UseHttpsRedirection();
-
+app.UseSession();
 app.UseStaticFiles();
 
 app.UseRouting();

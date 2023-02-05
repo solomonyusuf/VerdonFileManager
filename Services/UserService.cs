@@ -20,16 +20,12 @@ namespace VerdonFileManager.Services
             _db = db;
         }
         public async Task<AppUser> CurrentUser()
-        {
-            var ur = new AppUser();
-            var res = _cont.HttpContext.User.Identity.Name;
-            if(res != null)
-            {
-                ur = await _user.FindByEmailAsync(res);
-                
-            }
-            return ur;
+        { 
+                var res = _cont.HttpContext.Session.GetString("UserId");
+                var s = await _db.User.FindAsync(res);
+
+                return s;
         }
     }
 }
-//var usr = await _db.User.Where(x => res.Equals(x.Email)).ToListAsync();
+//

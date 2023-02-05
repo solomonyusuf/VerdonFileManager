@@ -1,0 +1,169 @@
+﻿@page "/folders"
+@inject ApplicationDbContext _db
+@inject ToastService _toast
+@inject UploadService _upload
+@inject IHttpContextAccessor _cont
+@inject UserManager<AppUser> _userm
+
+    <PageTitle>Folders</PageTitle>
+
+
+<div class="block-header">
+    <div class="row">
+        <div class="col-lg-7 col-md-6 col-sm-12">
+            <h2>File Manager</h2>
+            <ul class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/"><i class="zmdi zmdi-home"></i> File Manager</a></li>
+                <li class="breadcrumb-item active">Folders</li>
+            </ul>
+            <button class="btn btn-primary btn-icon mobile_menu" type="button"><i class="zmdi zmdi-sort-amount-desc"></i></button>
+        </div>
+        <div class="col-lg-5 col-md-6 col-sm-12">
+            <a href="/add/folder/@id" class="btn btn-success btn-icon float-right" type="submit"><i class="zmdi zmdi-upload"></i></a>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <div class="row clearfix">
+        <div class="col-lg-12">
+            <div class="card">
+                <ul class="nav nav-tabs pl-0 pr-0">
+                    <li class="nav-item"><a class="nav-link active" data-toggle="tab" href="#list_view">List View</a></li>
+                    <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#tab2">Grid View</a></li>
+                </ul>
+                <div class="tab-content">
+                    <div class="tab-pane active" id="list_view">
+                        <Grid AllowSorting="true" TItem="@Folder" class="table table-hover table-bordered table-striped" DataProvider="FolderDataProvider" AllowPaging="true" PageSize="10" AllowFiltering="true" Responsive="true">
+                            <GridColumn TItem="Folder" HeaderText="Name" PropertyName="Name"  SortKeySelector="item => item.Name">
+                                <i class="zmdi zmdi-folder w25"></i> @context.Name
+                            </GridColumn>
+                            <GridColumn TItem="Folder" HeaderText="Upload Token" PropertyName="UploadToken"  SortKeySelector="item => item.UploadToken">
+                                @context.UploadToken
+                            </GridColumn>
+                            <GridColumn TItem="Folder" HeaderText="Created Date" PropertyName="CreatedDate" SortKeySelector="item => item.CreatedDate">
+                                @context.CreatedDate
+                            </GridColumn>
+                            <GridColumn TItem="Folder">
+                                <button type="button" class="btn btn-icon btn-icon-mini btn-round btn-danger" @onclick="@(()=> Remove(context))">
+                                    <i class="zmdi zmdi-delete"></i>
+                                </button>
+                                <a href="/folder/@context.FolderId" type="button" class="btn btn-icon btn-icon-mini btn-round btn-primary">
+                                    <i class="zmdi zmdi-eye"></i>
+                                </a>
+                                <a href="/edit/folder/@context.FolderId" type="button" class="btn btn-icon btn-icon-mini btn-round btn-info">
+                                    <i class="zmdi zmdi-edit"></i>
+                                </a>
+                            </GridColumn>
+                        </Grid>
+                    </div>
+                    <div class="tab-pane file_manager" id="tab2">
+                        <div class="row clearfix">
+                            
+                              @if(folder.Count() != 0)
+                              {
+                                  @foreach (var item in folder)
+                                {
+                                    <div class="col-lg-3 col-md-4 col-sm-12">
+                                        <div class="card">
+                                            <a class="file">
+                                                <div class="icon">
+                                                    <i class="zmdi zmdi-folder w25"></i>
+                                                </div>
+                                                <div class="file-name">
+                                                    <p class="m-b-5 text-muted">@item.Name</p>
+                                                    <p><small><span class="date">@item.CreatedDate.ToLongDateString()</span></small></p>
+                                                    <br/>
+                                                    <div>
+                                                        <button @onclick="@(()=> Remove(item))" type="button" class="btn btn-icon btn-icon-mini btn-round btn-danger">
+                                                            <i class="zmdi zmdi-delete"></i>
+                                                        </button>
+                                                        <a href="/folder/@item.FolderId" type="button" class="btn btn-icon btn-icon-mini btn-round btn-primary">
+                                                            <i class="zmdi zmdi-eye"></i>
+                                                        </a>
+                                                        <a href="/edit/folder/@item.FolderId" type="button" class="btn btn-icon btn-icon-mini btn-round btn-info">
+                                                            <i class="zmdi zmdi-edit"></i>
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                            </a>
+                                        </div>
+                                    </div>
+                                    }
+                              }
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<ConfirmDialog @ref="DeleteDialog" />
+
+
+
+@code {
+
+
+    @code {
+        private List<Folder> folder = new();
+        public Folder fol = new();
+        private ConfirmDialog? DeleteDialog;
+        public string? id;
+        public GridDataProviderRequest<Folder> source = new();
+        public GridDataProviderResult<Folder> result = new();
+        protected override async Task OnInitializedAsync()
+        {
+            await base.OnInitializedAsync();
+            await GetAll();
+        }
+
+        async Task GetAll()
+        {
+            try
+            {
+
+                id = _cont.HttpContext.Session.GetString("UserId");
+                folder = await _db.Folder.Where(x => x.UserId.Equals(id)).ToListAsync();
+            }
+            catch(Exception e)
+            {
+                _toast.Notify(new ToastMessage(ToastType.Danger, $"An error occured."));
+                Console.WriteLine(e);
+            }
+        }
+
+
+
+
+        async Task Remove(Folder f)
+        {
+            try
+            {
+
+                var confirmation = await DeleteDialog.ShowAsync(title: "Are you sure you want to delete this?",
+                message1: "This will delete the record. Once deleted can not be rolled back.", confirmDialogOptions: new ConfirmDialogOptions { Dismissable = true });
+                if (confirmation)
+                {
+                    Directory.Delete(f.Path, true);
+                    _db.Folder.Remove(f);
+                    await _db.SaveChangesAsync();  
+                }       
+               
+            }
+            catch (Exception e)
+            {
+                _toast.Notify(new ToastMessage(ToastType.Danger, $"An error occured."));
+                Console.WriteLine(e);
+            }
+        }
+
+        private async Task<GridDataProviderResult<Folder>> FolderDataProvider(GridDataProviderRequest<Folder> request)
+        {
+            return await Task.FromResult(request.ApplyTo(folder));
+        }
+    }
+
+
+}

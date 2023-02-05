@@ -1,0 +1,50 @@
+﻿@page "/edit/folder/{ID}"
+@inject ApplicationDbContext _db
+@inject ToastService _toast
+@inject UploadService _upload
+@inject NavigationManager router
+<div class="container-fluid">
+    <div class="row clearfix">
+        <div class="col-lg-12">
+            <div class="card">
+                <h3>Edit Folder</h3>
+                <EditForm Model="folder" OnSubmit="Add" id="form_validation">
+                <div class="form-group form-float">
+                    <InputText @bind-Value="@folder.Name" type="text" class="form-control" placeholder="Enter Folder Name" name="name" required/>
+                </div>
+                    <button class="btn btn-raised btn-primary waves-effect" type="submit">SUBMIT</button>
+                </EditForm>
+              </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    public Folder? folder = new();   
+    [Parameter]
+    public string? ID { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        folder = await _db.Folder.FindAsync(Guid.Parse(ID));
+    }
+
+    async Task Add()
+    {
+        try
+        {
+            folder.Path = _upload.CreateFolder(folder.UploadToken);
+             _db.Update(folder);
+            await _db.SaveChangesAsync();
+            _toast.Notify(new ToastMessage(ToastType.Success, $"Data Updated successfully."));
+            router.NavigateTo("/folders");
+        }
+        catch (Exception e)
+        {
+            _toast.Notify(new ToastMessage(ToastType.Danger, $"An error occured."));
+            Console.WriteLine(e);
+        }
+    }
+
+}

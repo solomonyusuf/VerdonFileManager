@@ -1,10 +1,11 @@
-﻿@inherits LayoutComponentBase
-
+﻿@using Microsoft.AspNetCore.Identity
+@inherits LayoutComponentBase
 
 <!-- Right Icon menu Sidebar -->
+<Toasts class="p-3" AutoHide="true" Delay="4000" Placement="ToastsPlacement.TopRight" />
 <LoginDisplay/>
 
-<Sidebar/>
+<RightSidebar/>
 
 <section class="content">
     <div class="body_scroll">

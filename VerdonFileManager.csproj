@@ -3,13 +3,28 @@
   <PropertyGroup>
 	   <NoWarn>$(NoWarn);SYSLIB0003</NoWarn>
 	  <NoWarn>$(NoWarn);CS8602</NoWarn>
+<NoWarn>$(NoWarn);CS8601</NoWarn>
+	  <NoWarn>$(NoWarn);CS8603</NoWarn>
+	  <NoWarn>$(NoWarn);CS8604</NoWarn>
 	  <NoWarn>$(NoWarn);CS8618</NoWarn>
+	  <NoWarn>$(NoWarn);CA1416</NoWarn>
 	  <NoWarn>$(NoWarn);HTML0203</NoWarn>
     <TargetFramework>net6.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UserSecretsId>aspnet-VerdonFileManager-A4DF15F8-BF16-4AAF-B004-C0B925158B42</UserSecretsId>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="wwwroot\StaticFiles\X1584516GA\X1525919GA\**" />
+    <Content Remove="wwwroot\StaticFiles\X1584516GA\X1525919GA\**" />
+    <EmbeddedResource Remove="wwwroot\StaticFiles\X1584516GA\X1525919GA\**" />
+    <None Remove="wwwroot\StaticFiles\X1584516GA\X1525919GA\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="Services\UserService.cs" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Blazor.Bootstrap" Version="1.4.2" />
@@ -25,20 +40,13 @@
 
   <ItemGroup>
     <Folder Include="Areas\Identity\Pages\Account\" />
-    <Folder Include="wwwroot\UserImages\" />
+    <Folder Include="Migrations\" />
     <Folder Include="wwwroot\StaticFiles\" />
+    <Folder Include="wwwroot\UserImages\" />
   </ItemGroup>
 
   <ItemGroup>
-    <UpToDateCheckInput Remove="Shared\Sidebar.razor" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <_ContentIncludedByDefault Remove="Shared\Sidebar.razor" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include="Shared\Sidebar.razor" />
+    <None Include="Shared\RightSidebar.razor" />
   </ItemGroup>
 
 </Project>

@@ -1,4 +1,5 @@
 ﻿@page "/"
+@inject UploadService _upload
 
 <PageTitle>Dashboard</PageTitle>
 
@@ -493,3 +494,30 @@
         </div>
     </div>
 </div>
+@inject NavigationManager NavigationManager
+@inject UserManager<AppUser> _user
+@inject ApplicationDbContext _db
+@inject IHttpContextAccessor _cont
+
+@code {
+
+    [CascadingParameter] protected Task<AuthenticationState> AuthStat { get; set; }
+
+    protected async override Task OnInitializedAsync()
+    {
+        base.OnInitialized();
+        var user = (await AuthStat).User;
+        if (!user.Identity.IsAuthenticated)
+        {
+            NavigationManager.NavigateTo($"Identity/Account/Login");
+        }
+        else
+        {
+            var s = await _user.FindByEmailAsync(user.Identity.Name);
+            _cont.HttpContext.Session.SetString("UserId", s.Id);
+            _cont.HttpContext.Session.SetString("FName", s.FirstName);
+            _cont.HttpContext.Session.SetString("Image", s.Image);
+
+        }
+    }
+}

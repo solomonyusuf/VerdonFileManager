@@ -1,0 +1,79 @@
+﻿@page "/add/file/{Id}/{token}"
+@inject UploadService _upload
+@inject IHttpContextAccessor _cont
+@inject ApplicationDbContext _db
+@inject ToastService _toast
+@inject NavigationManager router
+
+<div class="col-lg-6 col-md-12">
+    <div class="card">
+        <div class="header">
+            <h2><strong>File</strong> Upload</h2>
+            <small><i>NOTE: you are not allowed to upload exceeding 200MB.
+            </i></small>
+        </div>
+        <div class="body form-group">
+            <InputFile OnChange="UploadFile" type="file" class="form-control" accept="image/*,audio/*,video/*,.xls,.xlsx,.txt,.pdf,.doc,.docx"/>
+        </div>
+    </div>  
+    </div>
+
+@code {
+    [Parameter]
+    public string? Id { get; set; }
+    [Parameter]
+    public string? token { get; set; }
+    public FileData file = new();
+    public string? userId;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        userId = _cont.HttpContext.Session.GetString("UserId");
+    }
+
+    public async Task UploadFile(InputFileChangeEventArgs args)
+    {
+        try
+        {
+            var e = args.GetMultipleFiles();
+            foreach (var i in e )
+            {
+                var f = args.File;
+                SetPrarameter(f);
+                file.Path = await _upload.InternalUpload(f, token);
+                await _db.FileData.AddAsync(file);
+
+            }
+
+            await _db.SaveChangesAsync();
+            router.NavigateTo($"/folder/{Id}");
+            _toast.Notify(new ToastMessage(ToastType.Success, $"File upload successfull."));
+        }
+        catch (Exception e)
+        {
+            _toast.Notify(new ToastMessage(ToastType.Danger, $"An error occured."));
+            Console.WriteLine(e);
+        }
+    }
+
+    void SetPrarameter(IBrowserFile f)
+    {
+        try
+        {
+            file.Name = f.Name;
+            file.Extension = f.ContentType;
+            file.UploadToken = token;
+            file.Size = f.Size;
+            file.FolderId = Guid.Parse(Id);
+            file.UserId = userId;
+            file.CreatedDate = DateTime.Now;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+        }
+    }
+
+    
+}

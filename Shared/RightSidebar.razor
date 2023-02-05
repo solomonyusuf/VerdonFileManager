@@ -1,7 +1,8 @@
 ﻿@using Microsoft.AspNetCore.Identity
 @using VerdonFileManager.Services
-@inject UserService _usr
 @inject NavigationManager router
+@inject IHttpContextAccessor _cont
+@inject ApplicationDbContext _db
 
 <aside id="leftsidebar" class="sidebar">
     <div class="navbar-brand">
@@ -15,10 +16,10 @@
         <ul class="list">
             <li>
                 <div class="user-info">
-                    <a class="image" href="profile.html"><img src="assets/images/profile_av.jpg" alt="User"></a>
+                    <a class="image" href="/@Image"><img src="assets/images/profile_av.jpg" alt="User"></a>
                     <div class="detail">
-                        <h4>Michael</h4>
-                        <small>Super Admin</small>                        
+                        <h4>@FirstName</h4>
+                        <small>Project Manager</small>                        
                     </div>
                 </div>
             </li>
@@ -53,17 +54,14 @@
 </aside>
 
 @code {
-    public IdentityUser user = new();
-
+    public string? FirstName;
+    public string? Image;
     protected override async Task OnInitializedAsync()
     {
-        user = await _usr.CurrentUser();
-        if(user == null)
-        {
-            router.NavigateTo("/Identity/Account/Login"); 
-        }
+        await base.OnInitializedAsync();
+        FirstName = _cont.HttpContext.Session.GetString("FName");
+        Image = _cont.HttpContext.Session.GetString("Image");
     }
-
     
 
 }
