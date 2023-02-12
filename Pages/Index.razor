@@ -509,7 +509,7 @@
         var user = (await AuthStat).User;
         if (!user.Identity.IsAuthenticated)
         {
-            NavigationManager.NavigateTo($"Identity/Account/Login");
+            NavigationManager.NavigateTo($"Identity/Account/Login?returnUrl=~%2F");
         }
         else
         {

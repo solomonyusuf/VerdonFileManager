@@ -149,8 +149,8 @@
                     Directory.Delete(f.Path, true);
                     _db.Folder.Remove(f);
                     await _db.SaveChangesAsync();  
-                }       
-               
+                }
+                StateHasChanged();
             }
             catch (Exception e)
             {

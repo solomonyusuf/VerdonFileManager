@@ -238,7 +238,7 @@
                 _db.FileData.Remove(f);
                 await _db.SaveChangesAsync();
                 File.Delete(f.Path);
-                await GetAll();
+                StateHasChanged();
                 _toast.Notify(new ToastMessage(ToastType.Success, $"Data deleted successfully."));
             }
 

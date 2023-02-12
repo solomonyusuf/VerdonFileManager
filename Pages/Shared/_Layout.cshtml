@@ -8,14 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - VerdonFileManager</title>
-    <link rel="stylesheet" href="assets/plugins/bootstrap/css/bootstrap.min.css">
-    <link rel="stylesheet" href="assets/plugins/dropify/css/dropify.min.css">
 
-    <link rel="stylesheet" href="assets/plugins/bootstrap/css/bootstrap.min.css">
-    <link rel="stylesheet" href="assets/plugins/footable-bootstrap/css/footable.bootstrap.min.css">
-    <link rel="stylesheet" href="assets/plugins/footable-bootstrap/css/footable.standalone.min.css">
-    <!-- Custom Css -->
-    <link rel="stylesheet" href="assets/css/style.min.css">
     <environment include="Development">
         <link rel="stylesheet" href="~/Identity/lib/bootstrap/dist/css/bootstrap.css" />
         <link rel="stylesheet" href="~/Identity/css/site.css" />
@@ -28,53 +21,18 @@
         <link rel="stylesheet" href="~/Identity/css/site.css" asp-append-version="true" />
     </environment>
 </head>
-<body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container">
-                <a class="navbar-brand" href="~/">VerdonFileManager</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse">
-                    @{
-                        var result = Engine.FindView(ViewContext, "_LoginPartial", isMainPage: false);
-                    }
-                    @if (result.Success)
-                    {
-                        await Html.RenderPartialAsync("_LoginPartial");
-                    }
-                    else
-                    {
-                        throw new InvalidOperationException("The default Identity UI layout requires a partial view '_LoginPartial' " +
-                            "usually located at '/Pages/_LoginPartial' or at '/Views/Shared/_LoginPartial' to work. Based on your configuration " +
-                            $"we have looked at it in the following locations: {System.Environment.NewLine}{string.Join(System.Environment.NewLine, result.SearchedLocations)}.");
-                    }
-                </div>
-            </div>
-        </nav>
-    </header>
-
-    <div class="container">
-        <partial name="_CookieConsentPartial" optional />
-        <main role="main" class="pb-1">
-            @RenderBody()
-        </main>
+<body class="theme-blush">
+    <div class="authentication">
+            <partial name="_CookieConsentPartial" optional />
+ 
+                @RenderBody()
+     
     </div>
-   
+
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.0.1/chart.umd.js" integrity="sha512-gQhCDsnnnUfaRzD8k1L5llCCV6O9HN09zClIzzeJ8OJ9MpGmIlCxm+pdCkqTwqJ4JcjbojFr79rl2F1mzcoLMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script> <!-- Add chart.js reference if Chart components are used in the application. -->
-    <script src="_content/Blazor.Bootstrap/blazor.bootstrap.js"></script>
-    <script src="assets/bundles/libscripts.bundle.js"></script>
-    <script src="assets/bundles/vendorscripts.bundle.js"></script>
-
-    <script src="assets/bundles/footable.bundle.js"></script> <!-- Lib Scripts Plugin Js -->
-    <script src="assets/plugins/dropify/js/dropify.min.js"></script>
-    <script src="assets/bundles/mainscripts.bundle.js"></script>
-    <script src="assets/js/pages/tables/footable.js"></script><!-- Custom Js -->
-
+ 
     <environment include="Development">
         <script src="~/Identity/lib/jquery/dist/jquery.js"></script>
         <script src="~/Identity/lib/bootstrap/dist/js/bootstrap.bundle.js"></script>

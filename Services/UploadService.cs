@@ -27,7 +27,44 @@ namespace VerdonFileManager.Services
         }
 
 
-        
+
+        [Route("Blocked")]
+        [HttpPost, DisableRequestSizeLimit]
+        [SecurityPermission(SecurityAction.Demand, ControlThread = true)]
+        public async Task<string> ProfileUpload(IBrowserFile seed)
+        {
+            try
+            {
+                    var file = seed.OpenReadStream(250000000);
+                    var folderName = Path.Combine("wwwroot", "StaticFiles", "UserImages");
+                    var pathToSave = Path.Combine(Directory.GetCurrentDirectory(), folderName);
+                    FileIOPermission permission = new FileIOPermission(FileIOPermissionAccess.AllAccess, pathToSave);
+                    permission.Demand();
+                    if (file.Length > 0)
+                    {
+                        var fileName = seed.Name;
+                        var fullPath = Path.Combine(pathToSave, fileName);
+                        var dbPath = Path.Combine(folderName, fileName);
+
+                        using (var stream = new FileStream(fullPath, FileMode.Create))
+                        {
+                            await file.CopyToAsync(stream);
+                        }
+
+                        return dbPath;
+                    }
+                    else
+                    {
+                        return null;
+                    }
+
+            }
+            catch (Exception ex)
+            {
+                Console.Write(ex);
+                return null;
+            }
+        }
 
 
         [Route("Blocked")]

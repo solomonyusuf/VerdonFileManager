@@ -7,6 +7,7 @@
 	  <NoWarn>$(NoWarn);CS8603</NoWarn>
 	  <NoWarn>$(NoWarn);CS8604</NoWarn>
 	  <NoWarn>$(NoWarn);CS8618</NoWarn>
+	  <NoWarn>$(NoWarn);CS8625</NoWarn>
 	  <NoWarn>$(NoWarn);CA1416</NoWarn>
 	  <NoWarn>$(NoWarn);HTML0203</NoWarn>
     <TargetFramework>net6.0</TargetFramework>
@@ -32,14 +33,16 @@
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="6.0.8" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="6.0.8" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="6.0.8" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.8" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="6.0.8" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.13" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="6.0.13">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="6.0.11" />
     <PackageReference Include="System.Security.Permissions" Version="7.0.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Areas\Identity\Pages\Account\" />
     <Folder Include="Migrations\" />
     <Folder Include="wwwroot\StaticFiles\" />
     <Folder Include="wwwroot\UserImages\" />
@@ -47,6 +50,15 @@
 
   <ItemGroup>
     <None Include="Shared\RightSidebar.razor" />
+    <None Include="wwwroot\assets\img\features-1.svg" />
+    <None Include="wwwroot\assets\img\features-2.svg" />
+    <None Include="wwwroot\assets\img\features-3.svg" />
+    <None Include="wwwroot\assets\img\features-4.svg" />
+    <None Include="wwwroot\assets\img\features-5.svg" />
+    <None Include="wwwroot\assets\img\features-6.svg" />
+    <None Include="wwwroot\assets\img\hero-carousel\hero-carousel-1.svg" />
+    <None Include="wwwroot\assets\img\hero-carousel\hero-carousel-2.svg" />
+    <None Include="wwwroot\assets\img\hero-carousel\hero-carousel-3.svg" />
   </ItemGroup>
 
 </Project>

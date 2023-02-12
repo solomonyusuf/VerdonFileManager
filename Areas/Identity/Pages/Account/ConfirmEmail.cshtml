@@ -1,8 +1,37 @@
-﻿@page
+@page
 @model ConfirmEmailModel
 @{
-    ViewData["Title"] = "Confirm email";
+    ViewData["Title"] = "Confirm Email";
+   
 }
 
-<h1>@ViewData["Title"]</h1>
-<partial name="_StatusMessage" model="Model.StatusMessage" />
+
+
+<div class="row justify-content-center">
+    <div class="col-md-9 col-lg-12 col-xl-10">
+        <div class="card shadow-lg o-hidden border-0 my-5">
+            <div class="card-body p-0">
+                <div class="row" style="height:600px;">
+                    <div class="col-lg-7 d-none d-lg-flex">
+                        <div class="flex-grow-1 bg-login-image" style="background-image:url('/assets/img/hero-carousel/hero-carousel-2.svg');"></div>
+                    </div>
+                    <div class="col-lg-5">
+                        <div class="p-5">
+                            <div class="text-center">
+                                <h1 style="color:black; font-size:larger; font-weight:bolder;">
+                                    <i>Ver<span style="color:rgb(43,187,208);font-size:larger;">don.</span></i>
+                                    <sub><small class="text-dark lead" style="font-size:small;">DIRECTORY</small></sub>
+                                </h1>
+                              
+                                <h4 class="text-dark mb-4">@ViewData["Title"]</h4>
+                            </div>
+                            <hr />
+                            <partial name="_StatusMessage" model="Model.StatusMessage" />  <br />
+                           
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

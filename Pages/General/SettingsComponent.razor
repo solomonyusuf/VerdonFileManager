@@ -1,0 +1,143 @@
+﻿@page "/settings"
+@inject ApplicationDbContext _db
+@inject ToastService _toast
+@inject UploadService _upload
+@inject NavigationManager router
+@inject IHttpContextAccessor _cont
+
+<div class="block-header">
+    <div class="row">
+        <div class="col-lg-7 col-md-6 col-sm-12">
+            <h2>Account Settings</h2>
+            <ul class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/"><i class="zmdi zmdi-home"></i> File Manager</a></li>
+                <li class="breadcrumb-item active">Settings</li>
+            </ul>
+            <button class="btn btn-primary btn-icon mobile_menu" type="button"><i class="zmdi zmdi-sort-amount-desc"></i></button>
+        </div>
+    </div>
+</div>
+
+
+<div class="container-fluid">
+    <div class="row clearfix">
+        <div class="col-lg-12">
+            <div class="card">
+                <div>
+                    <div class="file_manager" id="tab2">
+                        <div class="row clearfix">
+                              <div class="card mb-3">
+                                                <div class="card-header py-3">
+                                                    <p class="text-primary m-0 fw-bold"> User Info </p>
+                                                </div>
+                                                <div class="card-body">
+                                            <EditForm Model="@user" OnSubmit="Post">
+                                                        @if (user.Image != null)
+                                                        {
+                                                            <div class="col">
+                                                                <img class="rounded-circle mb-3 mt-4" src="@user.Image" width="160" height="160" />
+                                                            </div>
+                                                        }
+                                                        <div class="col-sm-12">
+                                                            <div class="form-group">
+                                                          <InputFile OnChange="@UploadFile" type="file" class="form-control form-control-lg" />
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-sm-12">
+                                                                <div class="mb-3">
+                                                                    <label class="form-label"><strong>First Name</strong></label>
+                                                                    <InputText @bind-Value="@user.FirstName" class="form-control" type="text" />
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-sm-12 ">
+                                                                <div class="mb-3">
+                                                                    <label class="form-label"><strong>Middle Name</strong></label>
+                                                                    <InputText @bind-Value="@user.MiddleName" class="form-control" type="text" />
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="row">
+                                                            <div class="col-sm-12">
+                                                                <div class="mb-3">
+                                                                    <label class="form-label"><strong>Last Name</strong></label>
+                                                                    <InputText @bind-Value="@user.LastName" class="form-control" type="text" />
+                                                                </div>
+                                                            </div>
+
+                                                        </div>
+                                                          <button class="btn btn-raised btn-primary waves-effect" type="submit">SUBMIT</button>
+                                                    </EditForm>
+                                                </div>
+                                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    private AppUser user = new();
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        await GetAll();
+
+    }
+
+    async Task GetAll()
+    {
+        try
+        {
+            user = await _db.User.Where(x => x.Id == _cont.HttpContext.Session.GetString("UserId")).SingleAsync();
+        }
+        catch (Exception e)
+        {
+            _toast.Notify(new ToastMessage(ToastType.Danger, $"An error occured."));
+            Console.WriteLine(e);
+        }
+    }
+
+    async Task Post()
+    {
+        try
+        {
+            _db.User.Update(user);
+            await _db.SaveChangesAsync();
+            await GetAll();
+        }
+        catch(Exception e)
+        {
+            Console.WriteLine(e);
+        }
+    }
+
+    public async Task UploadFile(InputFileChangeEventArgs args)
+    {
+        try
+        {
+            var e = args.GetMultipleFiles();
+            foreach (var i in e)
+            {
+                var f = args.File;
+                user.Image = await _upload.ProfileUpload(f);
+                 _db.User.Update(user);
+
+            }
+
+            await _db.SaveChangesAsync();
+            await GetAll();
+            _toast.Notify(new ToastMessage(ToastType.Success, $"File upload successfull."));
+        }
+        catch (Exception e)
+        {
+            _toast.Notify(new ToastMessage(ToastType.Danger, $"An error occured."));
+            Console.WriteLine(e);
+        }
+    }
+
+    
+}
