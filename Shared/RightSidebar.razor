@@ -43,8 +43,8 @@
                  <div class="progress-container progress-info">
                     <span class="progress-badge">Server Load</span>
                     <div class="progress">
-                        <div class="progress-bar progress-bar-warning" role="progressbar" aria-valuenow="86" aria-valuemin="0" aria-valuemax="100" style="width: 86%;">
-                            <span class="progress-value">86%</span>
+                        <div class="progress-bar progress-bar-warning" role="progressbar" aria-valuenow="86" aria-valuemin="0" aria-valuemax="100" style="width: @pog%;">
+                            <span class="progress-value">@pog%</span>
                         </div>
                     </div>
                 </div>
@@ -56,11 +56,13 @@
 @code {
     public string? FirstName;
     public string? Image;
+    public string pog;
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
         FirstName = _cont.HttpContext.Session.GetString("FName");
         Image = _cont.HttpContext.Session.GetString("Image");
+        pog = _cont.HttpContext.Session.GetString("Total");
     }
     
 

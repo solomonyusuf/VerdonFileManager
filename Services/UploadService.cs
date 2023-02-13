@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using VerdonFileManager.Data;
+using VerdonFileManager.Models;
 
 namespace VerdonFileManager.Services
 {
@@ -36,7 +37,7 @@ namespace VerdonFileManager.Services
             try
             {
                     var file = seed.OpenReadStream(250000000);
-                    var folderName = Path.Combine("wwwroot", "StaticFiles", "UserImages");
+                    var folderName = Path.Combine("wwwroot", "UserImages");
                     var pathToSave = Path.Combine(Directory.GetCurrentDirectory(), folderName);
                     FileIOPermission permission = new FileIOPermission(FileIOPermissionAccess.AllAccess, pathToSave);
                     permission.Demand();
@@ -115,29 +116,43 @@ namespace VerdonFileManager.Services
         [Route("verdon.filemanager.api/{appToken}")]
         [HttpPost, DisableRequestSizeLimit]
         [SecurityPermission(SecurityAction.Demand, ControlThread = true)]
-        public async Task<IActionResult> ExternalUpload([FromRoute]string appToken)
+        public async Task<IActionResult> ExternalUpload([FromRoute]string appToken, [FromForm]IFormFile _file)
         {
             try
             {
                 if (appToken != null && await _db.Folder.AnyAsync(x => x.UploadToken.Equals(appToken)))
                 {
-
-                    var file = Request.Form.Files[0];
+                    var folder = await _db.Folder.Where(x => x.UploadToken.Equals(appToken)).SingleAsync();
+                    var file = _file;
                     var folderName = Path.Combine("wwwroot", "StaticFiles", appToken);
                     var pathToSave = Path.Combine(Directory.GetCurrentDirectory(), folderName);
-
+                   
                     if (file.Length > 0)
                     {
-                        var fileName = file.Name;
+                        var fileName = file.FileName;
                         var fullPath = Path.Combine(pathToSave, fileName);
                         var dbPath = Path.Combine(folderName, fileName);
+
+                        var fileData = new FileData()
+                        {
+                            FolderId = folder.FolderId,
+                            UserId = folder.UserId,
+                            Name = fileName,
+                            Path = dbPath,
+                            Extension = file.ContentType,
+                            UploadToken = appToken,
+                            Size = file.Length
+                         };
 
                         using (var stream = new FileStream(fullPath, FileMode.Create))
                         {
                             await file.CopyToAsync(stream);
+                            await _db.FileData.AddAsync(fileData);
+                            await _db.SaveChangesAsync();
                         }
-                        var host = _config.GetConnectionString("URL");
-                        var link = $"{host}/{pathToSave}/{fileName}";
+  
+                        var host = Request.Host;
+                        var link = $"https://{host}/wwwroot/StaticFiles/{appToken}/{fileName}";
 
                         return Ok(new { link });
                     }
@@ -158,6 +173,55 @@ namespace VerdonFileManager.Services
                 return StatusCode(500, $"Internal server error: {ex}");
             }
         }
+
+
+
+        [AllowAnonymous]
+        [Route("verdon.filemanager.api/delete/{appToken}/{fileId}")]
+        [HttpPost, DisableRequestSizeLimit]
+        [SecurityPermission(SecurityAction.Demand, ControlThread = true)]
+        public async Task<IActionResult> DeleteUpload([FromRoute] string appToken, [FromRoute] Guid fileId)
+        {
+            try
+            {
+                if (appToken != null && await _db.Folder.AnyAsync(x => x.UploadToken.Equals(appToken)))
+                {
+
+                   
+                    var file = await _db.FileData.FindAsync(fileId);
+                    var folderName = Path.Combine("wwwroot", "StaticFiles", appToken);
+                    var pathToSave = Path.Combine(Directory.GetCurrentDirectory(), folderName);
+
+                        var fileName = file.Name;
+                        var fullPath = Path.Combine(pathToSave, fileName);
+                        var dbPath = Path.Combine(folderName, fileName);
+
+                        using (var stream = new FileStream(fullPath, FileMode.Truncate))
+                        {
+                          
+                             _db.FileData.Remove(file);
+                            await _db.SaveChangesAsync();
+                        }
+
+                       
+                        var link = $"file deleted sucessfully";
+
+                        return Ok(new { link });
+                 
+
+                }
+                else
+                {
+                    return NotFound();
+                }
+
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex}");
+            }
+        }
+
 
         [Route("Blocked")]
         [SecurityPermission(SecurityAction.Demand, ControlThread = true)]

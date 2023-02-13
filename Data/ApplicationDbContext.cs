@@ -14,7 +14,9 @@ namespace VerdonFileManager.Data
             : base(options)
         {
 
-        
+            Database.EnsureCreatedAsync();
+            if (Database.GetPendingMigrationsAsync().Result.Count() > 0)
+                Database.MigrateAsync();
 
         }
         
