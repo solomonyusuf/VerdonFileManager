@@ -44,8 +44,8 @@
 
   <ItemGroup>
     <Folder Include="Migrations\" />
-    <Folder Include="wwwroot\StaticFiles\" />
-    <Folder Include="wwwroot\UserImages\" />
+    <Folder Include="wwwroot\StaticFiles\" CopyToOutputDirectory="PreserveNewest"/>
+    <Folder Include="wwwroot\UserImages\" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
   <ItemGroup>
