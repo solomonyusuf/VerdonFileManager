@@ -67,7 +67,7 @@
                                                             </div>
 
                                                         </div>
-                                                          <button class="btn btn-raised btn-primary waves-effect" type="submit">SUBMIT</button>
+                                                          <button class="btn btn-raised btn-primary W-100 waves-effect" type="submit">SAVE CHANGES</button>
                                                     </EditForm>
                                                 </div>
                                             </div>
@@ -124,11 +124,11 @@
             {
                 var f = args.File;
                 user.Image = await _upload.ProfileUpload(f);
-                 _db.User.Update(user);
+                
 
             }
 
-            await _db.SaveChangesAsync();
+           
             _toast.Notify(new ToastMessage(ToastType.Success, $"File upload successfull."));
         }
         catch (Exception e)
