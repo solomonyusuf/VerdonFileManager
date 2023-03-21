@@ -129,7 +129,7 @@ namespace VerdonFileManager.Services
                    
                     if (file.Length > 0)
                     {
-                        var fileName = file.FileName;
+                        var fileName = file.FileName.Replace(" ", "_");
                         var fullPath = Path.Combine(pathToSave, fileName);
                         var dbPath = Path.Combine(folderName, fileName);
 

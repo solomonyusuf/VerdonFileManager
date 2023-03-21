@@ -99,7 +99,7 @@ namespace VerdonFileManager.Areas.Identity.Pages.Account
                             @$"
                                   <h1 align=""center"">Ver<span style=""color:rgb(43,187,208);"">don.</span></h1><br/>
                                     <hr><br/>
-                            Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
+                            Please confirm your account by <a href=""{HtmlEncoder.Default.Encode(callbackUrl)}""> (clicking here)</a>.");
 
                         if (_userManager.Options.SignIn.RequireConfirmedAccount)
                         {
